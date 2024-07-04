@@ -15,15 +15,18 @@ Tải file ISO Windows Server về, emulate lên UTM và cài đặt như HĐH t
 ### Reset sa trên SSMS
 
 - đăng nhập vào instance bằng tài khoản sa trên SSMS, sau đó chạy query:
+
     ```bash
     ALTER LOGIN sa WITH PASSWORD = 'new_password';
     ```
+    
 ### Reset windows pwd using chntpw in Kali Linux 
 
 # LAMP
 
 ## Cài đặt mô hình Lamp:
 -   install apache2, mysql-server php libapache2-mod-php php-mysql
+
     ```bash
     sudo apt install apache2 mysql-server php libapache2-mod-php php-mysql
     ```
@@ -32,11 +35,13 @@ Tải file ISO Windows Server về, emulate lên UTM và cài đặt như HĐH t
 
 ### Reset pwd
 -   Truy cập MySQL: Đăng nhập vào server qua SSH và chạy lệnh
+
     ```bash
     sudo mysql -u root -p
     ```
 
 -   Reset mật khẩu: Thực hiện lệnh sau để thay đổi mật khẩu cho user root:
+
     ```bash
     ALTER USER 'root'@'localhost' IDENTIFIED BY 'Vietnix@2024';
     ```
@@ -49,12 +54,14 @@ Tải file ISO Windows Server về, emulate lên UTM và cài đặt như HĐH t
 
     ```bash
     sudo nano /etc/mysql/mysql.conf.d/mysqld.cnf
-    Tìm và chỉnh sửa dòng bind-address:
     ```
+
 -   Tìm dòng bind-address và xoá.
+
     ```bash
     # bind-address = 127.0.0.1
     ```
+
 -   Lưu và đóng file cấu hình.
 
 #### Bước 2: Khởi động lại dịch vụ MySQL
@@ -68,6 +75,7 @@ Tải file ISO Windows Server về, emulate lên UTM và cài đặt như HĐH t
 #### Bước 3: Cấp quyền remote cho người dùng
 
 -   Truy cập vào MySQL:
+
     ```bash
     mysql -u root -p
     ```
@@ -80,7 +88,9 @@ Tải file ISO Windows Server về, emulate lên UTM và cài đặt như HĐH t
     ```
 
 #### Bước 4: Kiểm tra cấu hình firewall (nếu cần thiết)
+
 -   Mở cổng 3306 trong firewall:
+
     ```bash
     sudo ufw allow 3306/tcp
     sudo ufw reload
@@ -89,30 +99,42 @@ Tải file ISO Windows Server về, emulate lên UTM và cài đặt như HĐH t
 ## Cài đặt Laravel và WP
 
 ### Laravel
+
 -   Cài đặt composer
+
     ```bash
     curl -sS https://getcomposer.org/installer | php
     sudo mv composer.phar /usr/local/bin/composer
     ```
+
 -   Tải Laravel installer từ composer
+
     ```bash
     sudo composer global require laravel/installer
     ```
+
 -   Tạo Laravel project (ở trong /var/www)
+    
     ```bash
     laravel neư VietnixTest2
     ```
 
 ### WP
+
 -   Tải về 
+
     ```bash
     wget https://wordpress.org/latest.tar.gz
     ```
+
 -   tar gz
+
     ```bash
     tar -xzf latest.tar.gz
     ```
+
 -   rm gz sau khi tar
+
     ```bash
     rm latest.tar.gz
     ```
@@ -193,6 +215,7 @@ Tải file ISO Windows Server về, emulate lên UTM và cài đặt như HĐH t
 ### Reset user pwd
 
 **Vào mysql**
+
     ```bash
     mysql -u root -p
     ```
@@ -204,6 +227,7 @@ Tải file ISO Windows Server về, emulate lên UTM và cài đặt như HĐH t
     ```
 
 **Sau đó thả**
+
     ```sql
     ALTER USER 'wordpress_user'@'localhost' IDENTIFIED BY 'Matkhaumoi@123changhan';
     FLUSH PRIVILEGES;
