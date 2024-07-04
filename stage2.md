@@ -306,35 +306,23 @@ Nhập các thông tin theo hướng dẫn
 openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048
 ```
 
-**nano lại file config ngin (thêm ssl)x**
-```bash
+**nano file config nginx (thêm ssl)**
+```t
 server {
     listen 443 ssl;
-    server_name laravel.vietnix.vn;
+    server_name laravel.vietnix.vn wordpress.vietnix.vn;
 
     ssl_certificate /etc/ssl/certs/nginx-selfsigned.crt;
     ssl_certificate_key /etc/ssl/private/nginx-selfsigned.key;
     ssl_dhparam /etc/ssl/certs/dhparam.pem;
 
     location / {
-        proxy_pass http://192.168.64.10;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-    }
-}
-
-server {
-    listen 443 ssl;
-    server_name wordpress.vietnix.vn;
-
-    ssl_certificate /etc/ssl/certs/nginx-selfsigned.crt;
-    ssl_certificate_key /etc/ssl/private/nginx-selfsigned.key;
-    ssl_dhparam /etc/ssl/certs/dhparam.pem;
-
-    location / {
-        proxy_pass http://192.168.64.10;
+        if ($host = 'laravel.vietnix.vn') {
+            proxy_pass http://192.168.64.10;
+        }
+        if ($host = 'wordpress.vietnix.vn') {
+            proxy_pass http://192.168.64.10;
+        }
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -343,6 +331,31 @@ server {
 }
 ```
 **restart nginx**
+
 ```bash
 sudo systemctl restart nginx
+```
+
+**Tạo 1 self-signed cert + private key**
+
+```bash
+sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/nginx-selfsigned.key -out /etc/ssl/certs/nginx-selfsigned.crt
+```
+
+**combine chúng về 1 pem file**
+```bash
+sudo sh -c 'cat /etc/ssl/certs/nginx-selfsigned.crt /etc/ssl/private/nginx-selfsigned.key > /etc/ssl/private/nginx-selfsigned.pem'
+```
+
+## Move around
+
+Khi trỏ về /etc/ssl/private/nginx-selfsigned.pem, Đ gặp phải vấn đề về permission (đã cố chmod, chown các thứ rồi nhưng didnt work out), Đ quyết định move file này ra 1 cái dir mới là /etc/haproxy/ssl/ và sửa file config theo đúng path này thì nó chạy.
+
+**Test**
+```bash
+sudo haproxy -f /etc/haproxy/haproxy.cfg -c
+```
+**Restart**
+```bash 
+sudo systemctl restart haproxy
 ```
