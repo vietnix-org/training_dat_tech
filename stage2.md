@@ -19,7 +19,7 @@ Tải file ISO Windows Server về, emulate lên UTM và cài đặt như HĐH t
     ```bash
     ALTER LOGIN sa WITH PASSWORD = 'new_password';
     ```
-    
+
 ### Reset windows pwd using chntpw in Kali Linux 
 
 # LAMP
@@ -243,4 +243,106 @@ Tải file ISO Windows Server về, emulate lên UTM và cài đặt như HĐH t
 
 ```bash
 sudo apt install nginx
+```
+
+## config nginx
+
+**Ở phía VM1 (Ubuntu server), chạy lệnh **
+```bash
+ip a 
+```
+lấy địa chỉ IP, ra 192.168.64.10
+
+**Quay lại VM2 (Kali Linux), nano cái này**
+
+```bash
+sudo nano /etc/nginx/sites-available/default
+```
+**thêm 2 cái dưới này vào**
+
+```t
+server {
+    listen 80;
+    server_name laravel.vietnix.vn;
+
+    location / {
+        proxy_pass http://192.168.64.10;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+
+server {
+    listen 80;
+    server_name wordpress.vietnix.vn;
+
+    location / {
+        proxy_pass http://192.168.64.10;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```
+
+**restart nginx**
+```bash
+sudo systemctl restart nginx
+```
+## Tạo cert SSL 
+**Dùng OpenSSl**
+
+```bash
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/nginx-selfsigned.key -out /etc/ssl/certs/nginx-selfsigned.crt
+```
+Nhập các thông tin theo hướng dẫn
+
+**tạo dhparam**
+
+```bash
+openssl dhparam -out /etc/ssl/certs/dhparam.pem 2048
+```
+
+**nano lại file config ngin (thêm ssl)x**
+```bash
+server {
+    listen 443 ssl;
+    server_name laravel.vietnix.vn;
+
+    ssl_certificate /etc/ssl/certs/nginx-selfsigned.crt;
+    ssl_certificate_key /etc/ssl/private/nginx-selfsigned.key;
+    ssl_dhparam /etc/ssl/certs/dhparam.pem;
+
+    location / {
+        proxy_pass http://192.168.64.10;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+
+server {
+    listen 443 ssl;
+    server_name wordpress.vietnix.vn;
+
+    ssl_certificate /etc/ssl/certs/nginx-selfsigned.crt;
+    ssl_certificate_key /etc/ssl/private/nginx-selfsigned.key;
+    ssl_dhparam /etc/ssl/certs/dhparam.pem;
+
+    location / {
+        proxy_pass http://192.168.64.10;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```
+**restart nginx**
+```bash
+sudo systemctl restart nginx
 ```
