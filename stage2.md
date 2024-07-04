@@ -209,3 +209,14 @@ Tải file ISO Windows Server về, emulate lên UTM và cài đặt như HĐH t
     FLUSH PRIVILEGES;
     EXIT;
     ```
+----------------------------------------------
+
+# nginx
+
+## make another VM - Kali linux
+
+## install nginx 
+
+```bash
+sudo apt install nginx
+```
