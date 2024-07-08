@@ -247,7 +247,7 @@ sudo apt install nginx
 
 ## config nginx
 
-**Ở phía VM1 (Ubuntu server), chạy lệnh **
+**Ở phía VM1 (Ubuntu server), chạy lệnh**
 ```bash
 ip a 
 ```
@@ -355,7 +355,19 @@ Khi trỏ về /etc/ssl/private/nginx-selfsigned.pem, Đ gặp phải vấn đ�
 ```bash
 sudo haproxy -f /etc/haproxy/haproxy.cfg -c
 ```
+
 **Restart**
 ```bash 
 sudo systemctl restart haproxy
 ```
+
+## Quay lại với server một chút chút
+
+**chỉnh conf apache2 một xíu** 
+
+Sau một hồi loay hoay vì sao nó cứ redirect về cái default của apache2, Đ đã:
+
+- thay đổi 1 chút ở file conf của apache2: thêm dòng ServiceName localhost vào đó
+- thêm laravel.vietnix.vn và wordpress.vietnix.vn (hổm added nhưng hình như đoạn đó bị văng VM, cũng quên note luôn nhưng mà khi check lại không có nên thêm vào)
+
+Sau đó restart apache2 và mọi thứ works mượt mà
